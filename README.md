@@ -1,5 +1,9 @@
 # REST API Testing with Postman
 
+
+
+[![API Tests]([https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml/badge.svg)](https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml)](https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml/badge.svg)](https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml))
+
 ## 📌 Project Overview
 
 This project demonstrates **REST API functional testing using Postman** against the [Fake REST API](https://fakerestapi.azurewebsites.net/).
