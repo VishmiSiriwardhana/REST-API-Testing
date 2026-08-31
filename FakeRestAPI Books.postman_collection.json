@@ -1,301 +1,557 @@
 {
-	"info": {
-		"_postman_id": "c68d42e3-5208-45da-ba3a-35ba34bea116",
-		"name": "FakeRestAPI Books",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "25632825",
-		"_collection_link": "https://www.postman.com/test55-1505/workspace/demo-project-books/collection/25632825-c68d42e3-5208-45da-ba3a-35ba34bea116?action=share&source=collection_link&creator=25632825"
-	},
-	"item": [
-		{
-			"name": "Create book",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"const randomId = Math.floor(Math.random() * 1000) + 1;\r",
-							"\r",
-							"pm.collectionVariables.set(\"generatedId\", randomId);\r",
-							"\r",
-							"console.log(pm.collectionVariables.get(\"generatedId\"));"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", () => {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response time is less than 20000ms\", () => {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
-							"});\r",
-							"\r",
-							"const jsonData = pm.response.json();\r",
-							"\r",
-							"pm.test(\"Test the type of any part of the response\" , () => {\r",
-							"    pm.expect(jsonData).to.be.an(\"object\");\r",
-							"    pm.expect(jsonData.id).to.be.an(\"number\");\r",
-							"    pm.expect(jsonData.title).to.be.an(\"string\");\r",
-							"    pm.expect(jsonData.description).to.be.an(\"string\");\r",
-							"    pm.expect(jsonData.pageCount).to.be.an(\"number\");\r",
-							"    pm.expect(jsonData.excerpt).to.be.an(\"string\");\r",
-							"    pm.expect(jsonData.publishDate).to.be.an(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Generated ID is included in the response\", () => {\r",
-							"    const responseJson = pm.response.json();  \r",
-							"    pm.environment.set(\"bookID\", responseJson.id);\r",
-							"    const generatedId = pm.variables.get(\"generatedId\");\r",
-							"    pm.expect(responseJson.id).to.eql(parseInt(generatedId));\r",
-							"});\r",
-							"  \r",
-							"pm.test(\"Book title matches\", () => {\r",
-							"    pm.expect(jsonData.title).to.eql(\"Demo Book - API 1\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"id\": {{generatedId}},\r\n  \"title\": \"Demo Book - API 1\",\r\n  \"description\": \"This is a demo book\",\r\n  \"pageCount\": 200,\r\n  \"excerpt\": \"Test\",\r\n  \"publishDate\": \"2025-01-05T07:57:34.284Z\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{Base_URL}}/Books",
-					"host": [
-						"{{Base_URL}}"
-					],
-					"path": [
-						"Books"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Retrieve book",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", () => {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response time is less than 2000ms\", () => {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Content-Type is JSON\", () => {\r",
-							"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8; v=1.0\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response contains 'id' field\", () => {\r",
-							"    pm.response.to.have.jsonBody(\"id\");\r",
-							"});\r",
-							"\r",
-							"const jsonData = pm.response.json();\r",
-							"\r",
-							"pm.test(\"Response contains nested object\", () => { \r",
-							"    pm.expect(jsonData).to.have.property('title');\r",
-							"    pm.expect(jsonData.title).to.eql(\"Demo Book - API 1\");\r",
-							"\r",
-							"    pm.expect(jsonData).to.have.property('id');\r",
-							"    pm.expect(jsonData.id).to.be.a('number');\r",
-							"  \r",
-							"    pm.expect(jsonData).to.have.property('description');\r",
-							"    pm.expect(jsonData.description).to.eql(\"This is a demo book\");\r",
-							"\r",
-							"    pm.expect(jsonData).to.have.property('pageCount');\r",
-							"    pm.expect(jsonData.pageCount).to.be.a('number');\r",
-							"    pm.expect(jsonData.pageCount).to.eql(200);\r",
-							"\r",
-							"    pm.expect(jsonData).to.have.property('excerpt');\r",
-							"    pm.expect(jsonData.excerpt).to.eql(\"Test\");\r",
-							"\r",
-							"    pm.expect(jsonData).to.have.property('publishDate');\r",
-							"    pm.expect(jsonData.publishDate).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$/);\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{Base_URL}}/Books/{{bookID}}",
-					"host": [
-						"{{Base_URL}}"
-					],
-					"path": [
-						"Books",
-						"{{bookID}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update book",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", () => {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response time is less than 20000ms\", () => {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
-							"});\r",
-							"\r",
-							"var jsonData = pm.response.json();\r",
-							"\r",
-							"pm.test(\"Page count and excerpt are updated correctly\", () => {\r",
-							"    pm.expect(jsonData.pageCount).to.eql(300);\r",
-							"    pm.expect(jsonData.excerpt).to.eql(\"Test excerpt\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Publish date is in valid ISO format\", () => {\r",
-							"    pm.expect(jsonData.publishDate).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$/);\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\t\"id\" : {{generatedId}},\r\n  \"title\": \"Demo Book - API 1\",\r\n  \"description\": \"This is a demo book\",\r\n  \"pageCount\": 300,\r\n  \"excerpt\": \"Test excerpt\",\r\n  \"publishDate\": \"2025-01-05T07:57:34.284Z\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{Base_URL}}/Books/{{generatedId}}",
-					"host": [
-						"{{Base_URL}}"
-					],
-					"path": [
-						"Books",
-						"{{generatedId}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete book",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200 No Content\", () => {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response body is empty (No Content)\", () => {\r",
-							"    pm.response.to.have.body(\"\");\r",
-							"});\r",
-							"\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{Base_URL}}/Books/{{generatedId}}",
-					"host": [
-						"{{Base_URL}}"
-					],
-					"path": [
-						"Books",
-						"{{generatedId}}"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "generatedId",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "title",
-			"value": "",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "bf308751-45d6-4c5a-9ce4-188794d66840",
+    "name": "Book API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "25632825"
+  },
+  "item": [
+    {
+      "name": "01 - Create Book",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const uniqueId = Math.floor(Math.random() * 900000) + 100000;\r",
+              "\r",
+              "pm.collectionVariables.set(\"generatedId\", uniqueId);\r",
+              "\r",
+              "console.log(\"Generated Book ID:\", uniqueId);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response time is less than 2000ms\", () => {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+              "});\r",
+              "\r",
+              "const jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Response fields have correct data types\", () => {\r",
+              "    pm.expect(jsonData).to.be.an(\"object\");\r",
+              "    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+              "    pm.expect(jsonData.title).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.pageCount).to.be.a(\"number\");\r",
+              "    pm.expect(jsonData.excerpt).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.publishDate).to.be.a(\"string\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Generated ID is included in the response\", () => {\r",
+              "    const generatedId = pm.collectionVariables.get(\"generatedId\");\r",
+              "\r",
+              "    pm.collectionVariables.set(\"bookID\", jsonData.id);\r",
+              "\r",
+              "    pm.expect(jsonData.id).to.eql(parseInt(generatedId));\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Book title matches\", () => {\r",
+              "    pm.expect(jsonData.title).to.eql(\"Demo Book - API 1\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id\": {{generatedId}},\r\n  \"title\": \"Demo Book - API 1\",\r\n  \"description\": \"This is a demo book\",\r\n  \"pageCount\": 200,\r\n  \"excerpt\": \"Test\",\r\n  \"publishDate\": \"2025-01-05T07:57:34.284Z\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{Base_URL}}/Books",
+          "host": [
+            "{{Base_URL}}"
+          ],
+          "path": [
+            "Books"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "02 - Retrieve Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response time is less than 2000ms\", () => {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Content-Type is JSON\", () => {\r",
+              "    pm.response.to.have.header(\r",
+              "        \"Content-Type\",\r",
+              "        \"application/json; charset=utf-8; v=1.0\"\r",
+              "    );\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response contains 'id' field\", () => {\r",
+              "    pm.response.to.have.jsonBody(\"id\");\r",
+              "});\r",
+              "\r",
+              "const jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Response contains book details\", () => {\r",
+              "    pm.expect(jsonData).to.have.property(\"title\");\r",
+              "    pm.expect(jsonData.title).to.eql(\"Book 1\");\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"id\");\r",
+              "    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"description\");\r",
+              "    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"pageCount\");\r",
+              "    pm.expect(jsonData.pageCount).to.be.a(\"number\");\r",
+              "\r",
+              "    pm.expect(jsonData.pageCount).to.eql(100);\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"excerpt\");\r",
+              "    pm.expect(jsonData.excerpt).to.be.a(\"string\");\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"publishDate\");\r",
+              "    pm.expect(jsonData.publishDate).to.be.a(\"string\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{Base_URL}}/Books/1",
+          "host": [
+            "{{Base_URL}}"
+          ],
+          "path": [
+            "Books",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "03 - Get All Books",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response time is less than 2000ms\", () => {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Content-Type is JSON\", () => {\r",
+              "    pm.response.to.have.header(\r",
+              "        \"Content-Type\",\r",
+              "        \"application/json; charset=utf-8; v=1.0\"\r",
+              "    );\r",
+              "});\r",
+              "\r",
+              "const jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Response is an array\", () => {\r",
+              "    pm.expect(jsonData).to.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response contains books\", () => {\r",
+              "    pm.expect(jsonData.length).to.be.greaterThan(0);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Each book contains required fields\", () => {\r",
+              "    jsonData.forEach(book => {\r",
+              "        pm.expect(book).to.have.property(\"id\");\r",
+              "        pm.expect(book.id).to.be.a(\"number\");\r",
+              "\r",
+              "        pm.expect(book).to.have.property(\"title\");\r",
+              "        pm.expect(book.title).to.be.a(\"string\");\r",
+              "\r",
+              "        pm.expect(book).to.have.property(\"description\");\r",
+              "        pm.expect(book.description).to.be.a(\"string\");\r",
+              "\r",
+              "        pm.expect(book).to.have.property(\"pageCount\");\r",
+              "        pm.expect(book.pageCount).to.be.a(\"number\");\r",
+              "\r",
+              "        pm.expect(book).to.have.property(\"excerpt\");\r",
+              "        pm.expect(book.excerpt).to.be.a(\"string\");\r",
+              "\r",
+              "        pm.expect(book).to.have.property(\"publishDate\");\r",
+              "        pm.expect(book.publishDate).to.be.a(\"string\");\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id\": {{generatedId}},\r\n  \"title\": \"Demo Book - API 1\",\r\n  \"description\": \"This is a demo book\",\r\n  \"pageCount\": 200,\r\n  \"excerpt\": \"Test\",\r\n  \"publishDate\": \"2025-01-05T07:57:34.284Z\"\r\n}"
+        },
+        "url": {
+          "raw": "{{Base_URL}}/Books",
+          "host": [
+            "{{Base_URL}}"
+          ],
+          "path": [
+            "Books"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "04 - Update Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response time is less than 2000ms\", () => {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+              "});\r",
+              "\r",
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Page count and excerpt are updated correctly\", () => {\r",
+              "    pm.expect(jsonData.pageCount).to.eql(300);\r",
+              "    pm.expect(jsonData.excerpt).to.eql(\"Test excerpt\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Publish date is in valid ISO format\", () => {\r",
+              "    pm.expect(jsonData.publishDate).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": {{bookID}},\r\n  \"title\": \"Demo Book - API test\",\r\n  \"description\": \"This is a demo book test\",\r\n  \"pageCount\": 300,\r\n  \"excerpt\": \"Test excerpt\",\r\n  \"publishDate\": \"2025-01-05T07:57:34.284Z\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{Base_URL}}/Books/{{bookID}}",
+          "host": [
+            "{{Base_URL}}"
+          ],
+          "path": [
+            "Books",
+            "{{bookID}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "05 - Delete Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 No Content\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response body is empty (No Content)\", () => {\r",
+              "    pm.response.to.have.body(\"\");\r",
+              "});\r",
+              "\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{Base_URL}}/Books/{{bookID}}",
+          "host": [
+            "{{Base_URL}}"
+          ],
+          "path": [
+            "Books",
+            "{{bookID}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "06 - Retrieve Non-Existing Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", () => {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Content-Type is Problem JSON\", () => {\r",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\"))\r",
+              "        .to.include(\"application/problem+json\");\r",
+              "});\r",
+              "\r",
+              "const jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Error response contains expected fields\", () => {\r",
+              "    pm.expect(jsonData).to.have.property(\"title\");\r",
+              "    pm.expect(jsonData.title).to.eql(\"Not Found\");\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"status\");\r",
+              "    pm.expect(jsonData.status).to.eql(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{Base_URL}}/Books/99999",
+          "host": [
+            "{{Base_URL}}"
+          ],
+          "path": [
+            "Books",
+            "99999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "07 - Update Non-Existing Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Content-Type is JSON\", () => {\r",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\"))\r",
+              "        .to.include(\"application/json\");\r",
+              "});\r",
+              "\r",
+              "const jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Response contains updated book details\", () => {\r",
+              "    pm.expect(jsonData).to.have.property(\"id\");\r",
+              "    pm.expect(jsonData.id).to.eql(99999);\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"title\");\r",
+              "    pm.expect(jsonData.title).to.eql(\"Invalid Book\");\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"description\");\r",
+              "    pm.expect(jsonData.description).to.eql(\"This book does not exist\");\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"pageCount\");\r",
+              "    pm.expect(jsonData.pageCount).to.eql(100);\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.property(\"excerpt\");\r",
+              "    pm.expect(jsonData.excerpt).to.eql(\"Test\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": 99999,\r\n    \"title\": \"Invalid Book\",\r\n    \"description\": \"This book does not exist\",\r\n    \"pageCount\": 100,\r\n    \"excerpt\": \"Test\",\r\n    \"publishDate\": \"2025-01-05T07:57:34.284Z\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{Base_URL}}/Books/99999",
+          "host": [
+            "{{Base_URL}}"
+          ],
+          "path": [
+            "Books",
+            "99999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "08 - Delete Non-Existing Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response body is empty\", () => {\r",
+              "    pm.expect(pm.response.text()).to.eql(\"\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{Base_URL}}/Books/99999",
+          "host": [
+            "{{Base_URL}}"
+          ],
+          "path": [
+            "Books",
+            "99999"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "generatedId",
+      "value": ""
+    },
+    {
+      "key": "title",
+      "value": ""
+    },
+    {
+      "key": "bookID",
+      "value": ""
+    }
+  ]
 }
