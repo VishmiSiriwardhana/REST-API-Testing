@@ -1,6 +1,6 @@
 # REST API Testing with Postman
 
-[![API Tests]([https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml/badge.svg)](https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml)](https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml/badge.svg)](https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml))
+[![API Tests](https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml/badge.svg)](https://github.com/VishmiSiriwardhana/REST-API-Testing/actions/workflows/api-tests.yml)
 
 ## 📌 Project Overview
 
